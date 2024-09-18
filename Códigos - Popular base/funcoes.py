@@ -1,7 +1,7 @@
 import requests
 import json
 import boto3
-from botocore.exceptions import NoCredentialsError, PartialCredentialsError
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError,ClientError
 
 APIKEY = 'RGAPI-f565e5e5-682c-4c40-9401-56a976cdfe08'
 
@@ -13,6 +13,8 @@ def get_matchs(puuid):
         return response.json()
     
 def get_match_info(matchid):
+    if(check_if_object_exists(matchid)):
+        return
     url = f"https://americas.api.riotgames.com/lol/match/v5/matches/{matchid}?api_key={APIKEY}"
     response = requests.get(url)
     if response.status_code == 200:
@@ -39,3 +41,15 @@ def upload_to_s3(bucket_name, key, content):
         print("Erro: Credenciais da AWS incompletas.")
     except Exception as e:
         print(f"Erro ao enviar arquivo para o S3: {e}")
+
+def check_if_object_exists(key):
+    s3 = get_s3_client()       
+    try:
+        # Tenta buscar o objeto no bucket pela key
+        s3.head_object(Bucket='matchts-ids', Key=key)
+        return True  
+    except ClientError as e:
+        if e.response['Error']['Code'] == '404':
+            return False
+        else:
+            raise
