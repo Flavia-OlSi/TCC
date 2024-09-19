@@ -115,7 +115,7 @@ def processar_matchids():
                         match_info = get_match_info(partida, api_key)
                         if match_info != 400:
                             print(f"Partida: {partida} - Puuid: {puuid} ")
-                            upload_to_s3('match-info-teste', partida + '.json', match_info)
+                            upload_to_s3('match-info', partida + '.json', match_info)
                             count += 1
                         else:
                             print(f'Next...')
