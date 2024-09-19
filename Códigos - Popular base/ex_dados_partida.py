@@ -1,76 +1,127 @@
-from funcoes import *
-from bucket import *
-import pandas as pd
-import sys
+import requests
+import json
+import boto3
+from botocore.exceptions import NoCredentialsError, PartialCredentialsError,ClientError
 import time  # Importando o módulo time para utilizar o sleep
-from tkinter import Tk
-from tkinter.filedialog import askopenfilename
+import requests
+import pandas as pd
+import json
+from tkinter import Tk, filedialog
 
-# Função para selecionar um arquivo Excel usando uma interface gráfica
-def selecionar_arquivo_excel():
+
+def get_s3_client():
+    return boto3.client('s3',
+        aws_access_key_id='ASIAQ4KQC7P3NPECR7AE',
+        aws_secret_access_key='5GFnv2oVFlcNzur0rKWYkd9x81utUujpgsyXTKxP',
+        aws_session_token='IQoJb3JpZ2luX2VjECoaCXVzLXdlc3QtMiJHMEUCIQD+DIn5evjjUL1dr6r+uuo4U8eDc7yd4iF0sB+LMPmFRwIgdm35AZO4MRzbqYTDg2UbtG35pMuC4STO4S+30BHHi08qswIIYxAAGgwwNjA4MzQzODA3OTAiDDWIk0LA/ZvhB/ybxSqQAtb5O+hbNqDF/ZmfTrCHMlbrB/wOfvH5cawluiBjb/LyQ4M4+twDuh+pX9yRPxKw3IS7zjnIThJ7SGGP11SCFY5oF6dDdNLH5no3LplUadPAek49WNbkHaKKKZB72SZGKw2r4Tr1cHyPqM6NyyQz6WlvuAiPxhx900M5dn8/DLKoFHmjgwQJECq2+3RrmQfk0RQ8UcDibtXjkxEnoARlyZPr9lP8z8mG0iP2qPRNCmx+RwVUJb4KdsMf/KYFfyD0L6YXPhVQjNXm997zbWkInl1hUTXMID3sQ2dE+eUfnlj8gH79YS2hTmsx/O0IbPy9Rd2iP73IxDxufZeQxJzfa5593dmp0hxtxxuzc3NYC20DMPPDsbcGOp0BzQlVVjZD1StRVI4Q/t1SIfLhA8aU2PJo85lisycqO3bcQF//KF2FyAwZzO9pMB9ZFEAf/W+GCN0egvcB/V80KKBBPfIP5S5/WxwUlvV/uPXAr+ON+z4COFLuXBC5CW02hxZOuMVTsKJfrJyEnf1Fr3lXWHcFHvf87OLBWLmGzjqTQZHPa+SOd9L/zTu5gfJmzlVT2wLo3h3NB3KwVg==',
+        region_name='us-east-1')
+
+# Função para escolher o arquivo XLSX
+def escolher_arquivo_xlsx():
     root = Tk()
     root.withdraw()  # Esconde a janela principal do Tkinter
-    arquivo = askopenfilename(title="Selecione o arquivo .xlsx", filetypes=[("Arquivo Excel", "*.xlsx")])
+    arquivo = filedialog.askopenfilename(title="Escolha o arquivo XLSX", filetypes=[("Arquivos XLSX", "*.xlsx")])
     return arquivo
 
-# Carregar os parâmetros a partir de um arquivo Excel
-def carregar_parametros_do_excel(caminho_arquivo):
-    df = pd.read_excel(caminho_arquivo)
-    # Supondo que os parâmetros estão na primeira coluna
-    return df.iloc[:, 0].tolist()
-
-# Abrir explorador de arquivos para o usuário selecionar o arquivo Excel
-caminho_arquivo = selecionar_arquivo_excel()
-
-if not caminho_arquivo:
-    print("Nenhum arquivo selecionado. Saindo do programa.")
-    sys.exit()
-
-# Agora 'parametros' é uma lista obtida do arquivo Excel
-parametros = carregar_parametros_do_excel(caminho_arquivo)
-
-# Inicializando os nomes dos buckets
-bucket_matchts_ids = 'matchts-ids-teste'
-bucket_match_info = 'match-info-teste'
-bucket_id = 3
-bucket_info = 6  
-
-count = 1
-bucket_novo = 1
-
-# Iterando sobre cada item na lista 'parametros'
-for parametro in parametros:
-    json_matchsids = get_matchs(parametro)
-    if json_matchsids:
-        for item in json_matchsids:
-            # Usando os buckets dinâmicos nos uploads
-            upload_to_s3(bucket_matchts_ids, item, '')
-            match_info = get_match_info(item)
-            upload_to_s3(bucket_match_info, item + '.json', match_info)
-            print(count)
-            count += 1
-            bucket_novo += 1
-
-            # Verifica se o contador de buckets chegou a 1000
-            if bucket_novo == 1000:
-                # Incrementa o número do bucket e cria dois novos buckets
-                bucket_id += 1
-                bucket_info += 1
-                novo_bucket_1 = f'matchts-ids-teste{bucket_id}'
-                novo_bucket_2 = f'match-info-teste{bucket_info}'
-                
-                create_s3_bucket(novo_bucket_1)
-                create_s3_bucket(novo_bucket_2)
-                
-                print(f'Criados os novos buckets: {novo_bucket_1} e {novo_bucket_2}')
-                
-                # Atualizando os nomes dos buckets
-                bucket_matchts_ids = novo_bucket_1
-                bucket_match_info = novo_bucket_2
-                
-                # Reiniciando o contador de bucket_novo após criar novos buckets
-                bucket_novo = 0
+# Função para fazer chamada à API e obter os 'puuids'
+def obter_puuids(api_key, matchid):
+    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/{matchid}?api_key={api_key}"
+    response = requests.get(url)
     
-    # Aguardando 120 segundos (2 minutos) antes de processar o próximo parâmetro
-    print(f'Aguardando 2 minutos antes de processar o próximo parâmetro...')
-    time.sleep(120)
+    if response.status_code == 200:
+        data = response.json()
+        puuids = [participant['puuid'] for participant in data['info']['participants']]
+        return puuids
+    else:
+        print(f"Erro ao acessar API para matchid {matchid}: {response.status_code}")
+        return []
+
+# Função para obter partidas usando o 'puuid'
+def obter_partidas_por_puuid(api_key, puuid):
+    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/{puuid}/ids?start=0&count=100&api_key={api_key}"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        partidas = response.json()
+        return partidas
+    else:
+        print(f"Erro ao acessar API para puuid {puuid}: {response.status_code}")
+        return []
+    
+def get_match_info(matchid, api_key):
+    if(check_if_object_exists(matchid)):
+        return
+    url = f"https://americas.api.riotgames.com/lol/match/v5/matches/{matchid}?api_key={api_key}"
+    response = requests.get(url)
+    if response.status_code == 200:
+        match_info = json.dumps(response.json()).encode('utf-8')
+        return match_info
+    else:
+        400
+    
+def check_if_object_exists(key):
+    s3 = get_s3_client()       
+    try:
+        # Tenta buscar o objeto no bucket pela key
+        s3.head_object(Bucket='match-info', Key=key)
+        return True  
+    except ClientError as e:
+        if e.response['Error']['Code'] == '404':
+            return False
+        else:
+            raise
+
+def upload_to_s3(bucket_name, key, content):
+    try:
+        s3_client = get_s3_client()        
+        s3_client.put_object(Bucket=bucket_name, Key=key, Body=content)
+        
+        print(f"Arquivo enviado com sucesso para {bucket_name}/{key}")
+        
+    except NoCredentialsError:
+        print("Erro: Credenciais da AWS não encontradas.")
+    except PartialCredentialsError:
+        print("Erro: Credenciais da AWS incompletas.")
+    except Exception as e:
+        print(f"Erro ao enviar arquivo para o S3: {e}")
+
+# Função principal para processar o arquivo XLSX e buscar puuids e partidas
+def processar_matchids():
+    count = 0
+    # Escolhe o arquivo XLSX
+    caminho_arquivo = escolher_arquivo_xlsx()
+    
+    # Lê o arquivo XLSX
+    df = pd.read_excel(caminho_arquivo)
+    
+    # Supondo que a coluna que contém os 'matchIds' seja chamada 'matchId'
+    matchids = df['matchId']
+    
+    # Sua API key da Riot
+    api_key = "RGAPI-8e90acce-4dd4-4207-8a06-c137b5489dfc"
+    
+    # Itera sobre cada matchId e faz a chamada à API
+    for matchid in matchids:
+        puuids = obter_puuids(api_key, matchid)
+        if puuids:
+            for puuid in puuids:
+                # print(f"PUUID para matchid {matchid}: {puuid}")
+                
+                # Faz a chamada à API para obter as partidas pelo puuid
+                partidas = obter_partidas_por_puuid(api_key, puuid)
+                
+                if partidas:
+                    for partida in partidas:
+                        match_info = get_match_info(partida, api_key)
+                        if match_info != 400:
+                            print(f"Partida: {partida} - Puuid: {puuid} ")
+                            upload_to_s3('match-info-teste', partida + '.json', match_info)
+                            count += 1
+                        else:
+                            print(f'Next...')
+
+        
+    print(f"Total de partidas enviadas para o S3: {count}")
+
+# Chama a função principal
+processar_matchids()
