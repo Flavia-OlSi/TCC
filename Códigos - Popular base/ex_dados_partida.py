@@ -11,9 +11,9 @@ from tkinter import Tk, filedialog
 
 def get_s3_client():
     return boto3.client('s3',
-        aws_access_key_id='ASIAQ4KQC7P3NPECR7AE',
-        aws_secret_access_key='5GFnv2oVFlcNzur0rKWYkd9x81utUujpgsyXTKxP',
-        aws_session_token='IQoJb3JpZ2luX2VjECoaCXVzLXdlc3QtMiJHMEUCIQD+DIn5evjjUL1dr6r+uuo4U8eDc7yd4iF0sB+LMPmFRwIgdm35AZO4MRzbqYTDg2UbtG35pMuC4STO4S+30BHHi08qswIIYxAAGgwwNjA4MzQzODA3OTAiDDWIk0LA/ZvhB/ybxSqQAtb5O+hbNqDF/ZmfTrCHMlbrB/wOfvH5cawluiBjb/LyQ4M4+twDuh+pX9yRPxKw3IS7zjnIThJ7SGGP11SCFY5oF6dDdNLH5no3LplUadPAek49WNbkHaKKKZB72SZGKw2r4Tr1cHyPqM6NyyQz6WlvuAiPxhx900M5dn8/DLKoFHmjgwQJECq2+3RrmQfk0RQ8UcDibtXjkxEnoARlyZPr9lP8z8mG0iP2qPRNCmx+RwVUJb4KdsMf/KYFfyD0L6YXPhVQjNXm997zbWkInl1hUTXMID3sQ2dE+eUfnlj8gH79YS2hTmsx/O0IbPy9Rd2iP73IxDxufZeQxJzfa5593dmp0hxtxxuzc3NYC20DMPPDsbcGOp0BzQlVVjZD1StRVI4Q/t1SIfLhA8aU2PJo85lisycqO3bcQF//KF2FyAwZzO9pMB9ZFEAf/W+GCN0egvcB/V80KKBBPfIP5S5/WxwUlvV/uPXAr+ON+z4COFLuXBC5CW02hxZOuMVTsKJfrJyEnf1Fr3lXWHcFHvf87OLBWLmGzjqTQZHPa+SOd9L/zTu5gfJmzlVT2wLo3h3NB3KwVg==',
+        aws_access_key_id='ASIAQ4KQC7P3OYR3UFCU',
+        aws_secret_access_key='sLayWrMf4z3E0z8A44izQ1ZfHd3C1rmcfB+z7sy/',
+        aws_session_token='IQoJb3JpZ2luX2VjEC4aCXVzLXdlc3QtMiJHMEUCIQDQxupRJyf8CVuqPSjB45xrtTdV8uhD646jB5mj7oH8BQIgCKEXHyW08wz1p+K5mP8woY92BzrKAAdGfnwlF5vX+7IqswIIZxAAGgwwNjA4MzQzODA3OTAiDN1L6t9u8FMNxe9x0iqQArevtj360eIPtIGcYoFPR2sD4FupATcg5aeyD8spn6hxFoZUXv2VmUPUhzuEo0LiAat7SI0sKHLLAUaC+05QCGfGhUHnjN/9ptFjIPiYZL1BQJs6LRwqsXofx24+qvL4JPm1bYBpKU1dmdUyGvZBCkcLCBrZWF4DS4MhQtCoOv3pQypY/5I361lE+/gQSHkNIrvdG0DGTxgsv7aQo4MLOzbVoSC5ext2WN3pQ+6aq3jB5hMvYoenzwf5TU8FAzU1tkgQyQp14Lkl9AeDd2BZrd8jC7/mcpj2Vc7gmh2X/IxejqepiaUfX2dZG6UkMotIAs5Ir7htR7mQivv3ZcKV4bn9xZJAaDRb4wDk+ZScOZmHML+zsrcGOp0BE8Qy6qoh1jY41XV6Nmidn7BJW4Bx682Wr+ifrrA7DxT3y5HCrStRuai5Uc1HUh5wC1joLF69A1Udti11hdtCUJXo64SN/3v1WfYkawOUh090OqYDC16jKBI5w17RZiUmIp0zOdc3+2/0DFFgOLB2YWjoy2xo9izEp9Dy/BbBpByfr1o2nOHQfRIZJPbmv41OKhdZ+nO2xeoRfPuIpQ==',
         region_name='us-east-1')
 
 # Função para escolher o arquivo XLSX
@@ -98,7 +98,7 @@ def processar_matchids():
     matchids = df['matchId']
     
     # Sua API key da Riot
-    api_key = "RGAPI-8e90acce-4dd4-4207-8a06-c137b5489dfc"
+    api_key = "RGAPI-1ff6e87e-a55f-4720-ae1e-55f9c7c52432"
     
     # Itera sobre cada matchId e faz a chamada à API
     for matchid in matchids:
@@ -116,6 +116,7 @@ def processar_matchids():
                         if match_info != 400:
                             print(f"Partida: {partida} - Puuid: {puuid} ")
                             upload_to_s3('match-info', partida + '.json', match_info)
+                            print(count)
                             count += 1
                         else:
                             print(f'Next...')
