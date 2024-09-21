@@ -87,8 +87,8 @@ form{
 }
 
 .card{
-    width: 370px;
-    height: 350px;
+    width: 450px;
+    height: 380px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -99,7 +99,7 @@ form{
 
 .card-titulo{
     width: 70%;
-    height: 20%;
+    height: 8%;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -109,7 +109,7 @@ form{
 
 .card-jogadores{
     width: 100%;
-    height: 60%;
+    height: 80%;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -140,6 +140,19 @@ form{
 
 .card-jogador-vermelho img{
     border: 2px solid red;
+}
+
+.team {
+    flex: 1;
+}
+
+.card-jogador-azul, .card-jogador-vermelho {
+    padding: 5px;
+    margin: 5px;
+}
+
+.card-previsao {
+    margin-top: 5px;
 }
 
 .card-jogador-azul{
