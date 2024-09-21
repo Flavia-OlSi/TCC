@@ -107,7 +107,6 @@ form{
     font-weight: bolder;
 }
 
-
 .card-jogadores{
     width: 100%;
     height: 60%;
@@ -187,4 +186,64 @@ form{
 
 .vitoria-vemelho{
     border: 3px solid red;
+}
+
+.partida-pesquisada{
+    width: 100%;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: rgba(112, 111, 111, 0.258);
+    backdrop-filter: blur(2px);
+    z-index: 5;
+}
+
+.div-partida-pesquisada{
+    width: 50%;
+    height: 90vh;
+    border-radius: 5px;
+    border: 2px solid black;
+    background-color: #514c3e;
+}
+
+.btn-partida-pesquisada{
+    width: 100%;
+    height: 15%;
+    display: flex;
+    justify-content: right;
+    align-items: center;
+}
+
+.btn-partida-pesquisada button{
+    width: 50px;
+    height: 50px;
+    margin-right: 5%;
+    border: none;
+    background-color: transparent;
+}
+
+.btn-partida-pesquisada i{
+    font-size: 45px;
+    color: white;
+}
+
+.btn-partida-pesquisada i:hover{
+    font-size: 46px;
+    color:  rgb(245, 245, 233);
+}
+
+.jogo-partida-pesquisada{
+    width: 100%;
+    height: 85%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.hide{
+    display: none;
 }
