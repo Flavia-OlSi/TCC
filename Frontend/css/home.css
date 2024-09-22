@@ -86,9 +86,13 @@ form{
     align-items: center;
 }
 
+.team {
+    flex: 1;
+}
+
 .card{
-    width: 370px;
-    height: 350px;
+    width: 455px;
+    height: 385px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -109,7 +113,7 @@ form{
 
 .card-jogadores{
     width: 100%;
-    height: 60%;
+    height: 70%;
     display: flex;
     justify-content: space-around;
     align-items: center;
@@ -136,10 +140,14 @@ form{
 
 .card-jogador-azul img{
     border: 2px solid #0DC4E9;
+    width: 20%;
+    height: 20%;
 }
 
 .card-jogador-vermelho img{
     border: 2px solid red;
+    width: 20%;
+    height: 20%;
 }
 
 .card-jogador-azul{
@@ -147,10 +155,11 @@ form{
     display: flex;
     justify-content: right;
     align-items: center;
+    padding-bottom: 5%;
 }
 
 .card-jogador-azul p{
-    padding-right: 5%;
+    padding-right: 2%;
 }
 
 .card-jogador-vermelho{
@@ -158,10 +167,11 @@ form{
     display: flex;
     justify-content: left;
     align-items: center;
+    padding-bottom: 5%;
 }
 
 .card-jogador-vermelho p{
-    padding-left: 5%;
+    padding-left: 2%;
 }
 
 .card-previsao{
@@ -181,11 +191,11 @@ form{
 }
 
 .vitoria-azul{
-    border: 3px solid #0DC4E9;
+    border: 2px solid #0DC4E9;
 }
 
-.vitoria-vemelho{
-    border: 3px solid red;
+.vitoria-vermelho{
+    border: 2px solid red;
 }
 
 .partida-pesquisada{

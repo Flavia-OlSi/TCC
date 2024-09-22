@@ -1,7 +1,7 @@
 let championImageJson = {};
-const apiKey = "RGAPI-d727485e-e2cd-43b5-9fd0-e573e96d2f3e"; // Substitua com sua chave de API
+const apiKey = "RGAPI-525d9593-7119-4a7c-aa0d-1121a94baab4"; 
 
-// Função para buscar a versão mais recente e os dados dos campeões
+
 async function getLatestDDragon() {
     try {
         const versionsResponse = await fetch("https://ddragon.leagueoflegends.com/api/versions.json");
@@ -14,14 +14,14 @@ async function getLatestDDragon() {
         if (!ddragonResponse.ok) throw new Error("Failed to fetch champion data");
 
         const champions = await ddragonResponse.json();
-        championImageJson = champions.data; // Armazena os dados dos campeões
+        championImageJson = champions.data; 
         return championImageJson;
     } catch (error) {
         console.error("Error fetching data:", error);
     }
 }
 
-// Função para buscar os jogos em destaque da API da Riot
+
 async function getFeaturedGames() {
     try {
         const response = await fetch(`https://br1.api.riotgames.com/lol/spectator/v5/featured-games?api_key=${apiKey}`);
@@ -35,7 +35,7 @@ async function getFeaturedGames() {
     }
 }
 
-// Função para mapear o championId para o nome e imagem do campeão
+
 async function getChampionByKey(key) {
     if (!championImageJson || Object.keys(championImageJson).length === 0) {
         await getLatestDDragon();
@@ -49,13 +49,13 @@ async function getChampionByKey(key) {
     return null;
 }
 
-// Função auxiliar para gerar o HTML dos jogadores por time
+
 const createTeamHtml = async (team, className) => {
     return Promise.all(
         team.map(async (participant) => {
             const time = participant.teamId;
             const championId = participant.championId;
-            const riotId = participant.riotId; // Nome do invocador
+            const riotId = participant.riotId; 
             const championInfo = await getChampionByKey(championId);
 
             if (championInfo && time === 100) {
@@ -85,63 +85,63 @@ const createTeamHtml = async (team, className) => {
     );
 };
 
-// Função para substituir os championIds com nome, imagem e riotId para todas as partidas
+
 async function replaceChampionIdsWithNamesForGames() {
     const featuredGames = await getFeaturedGames();
     if (!featuredGames) return;
 
     const gameList = featuredGames.gameList;
 
-    let allGamesHtml = ""; // Armazena o HTML de todas as partidas
+    let allGamesHtml = ""; 
 
-    // Iterar sobre cada partida
+    
     for (let i = 0; i < gameList.length; i++) {
         const game = gameList[i];
         const gameParticipants = game.participants;
 
-        // Separar jogadores por time (Azul: teamId = 100, Vermelho: teamId = 200)
+        
         const blueTeam = gameParticipants.filter(participant => participant.teamId === 100);
         const redTeam = gameParticipants.filter(participant => participant.teamId === 200);
 
-        // Gerar HTML para cada time
+        
         const blueTeamHtml = (await createTeamHtml(blueTeam, "azul")).join("");
         const redTeamHtml = (await createTeamHtml(redTeam, "vermelho")).join("");
 
-        // Adicionar a partida ao HTML geral
+        
         allGamesHtml += `
             <div class="card partida-card">
-                <div class="card-titulo">
-                    <p>Ranqueada Solo/Duo</p>
-                </div>
-                <div class="card-titulo">
-                    <p>(20:40)</p>
-                </div>
-                <div class="card-jogadores">
-                    <div id="blue-team-${i}" class="team">
-                        <h4 style ="padding-left: 5vh">Time Azul</h4>
-                        ${blueTeamHtml}
+                <div class="card vitoria-azul">
+                    <div class="card-titulo">
+                     <p>Ranqueada Solo/Duo</p>
                     </div>
-                    <div id="red-team-${i}" class="team">
-                        <h4 style ="padding-left: 2vh">Time Vermelho</h4>
-                        ${redTeamHtml}
-                    </div>                           
-                </div>
-                <div class="card-previsao">
-                    <h4>Previsão de Vitória:</h4>
-                    <p>Time Azul</p>
+                    <div style="margin-top: -2%;margin-bottom: 3%">
+                        <p>(20:40)</p>
+                     </div>
+                    <div class="card-jogadores">
+                        <div id="blue-team-${i}" class="team">
+                            ${blueTeamHtml}
+                        </div>
+                        <div id="red-team-${i}" class="team">
+                            ${redTeamHtml}
+                        </div>                           
+                    </div>
+                    <div class="card-previsao">
+                        <h4>Previsão de Vitória:</h4>
+                        <p>Time Azul</p>
+                    </div>
                 </div>
             </div>
         `;
     }
 
-    // Exibir todas as partidas no DOM
+    
     document.getElementById("featured-games").innerHTML = allGamesHtml;
 }
 
-// Função principal
+
 async function main() {
-    await getLatestDDragon(); // Carrega os dados dos campeões do DDragon
-    await replaceChampionIdsWithNamesForGames(); // Substitui os IDs pelos nomes, imagens e riotId para todas as partidas
+    await getLatestDDragon(); 
+    await replaceChampionIdsWithNamesForGames();
 }
 
 main();
