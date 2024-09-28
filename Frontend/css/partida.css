@@ -66,7 +66,7 @@ form{
     background-color: white;
 }
 
-.partidas{
+.partida{
     width: 100%;
     height: calc(100% - 225px);
     display: flex;
@@ -78,11 +78,8 @@ form{
 .div-partida{
     width: 95%;
     height: 100%;
-    display: grid;
-    grid-template-columns: 33.3% 33.3% 33.3%;
-    grid-template-rows: 47% 47%;
-    align-content: center;
-    justify-items: center;
+    display: flex;
+    justify-content: center;
     align-items: center;
 }
 
@@ -91,23 +88,23 @@ form{
 }
 
 .card{
-    width: 455px;
-    height: 385px;
+    width: 50vw;
+    height: 70%;
     display: flex;
     flex-direction: column;
     align-items: center;
     border-radius: 5px;
     box-shadow: 2px 2px #6c6c6cad;
-    background-color: rgb(240, 237, 237);
+    background-color: rgb(255, 255, 255);
 }
 
 .card-titulo{
-    width: 70%;
+    width:45%;
     height: 20%;
     display: flex;
     justify-content: space-around;
     align-items: center;
-    font-size: 15px;
+    font-size: 18px;
     font-weight: bolder;
 }
 
@@ -120,12 +117,12 @@ form{
 }
 
 .card-jogadores p{
-    font-size: 12px;
+    font-size: 14px;
 }
 
 .card-jogadores img{
-    width: 32px;
-    height: 32px;
+    width: 60px;
+    height: 60px;
     border-radius: 50%;
 }
 
@@ -140,14 +137,10 @@ form{
 
 .card-jogador-azul img{
     border: 2px solid #0DC4E9;
-    width: 20%;
-    height: 20%;
 }
 
 .card-jogador-vermelho img{
     border: 2px solid red;
-    width: 20%;
-    height: 20%;
 }
 
 .card-jogador-azul{
@@ -155,11 +148,10 @@ form{
     display: flex;
     justify-content: right;
     align-items: center;
-    padding-bottom: 5%;
 }
 
 .card-jogador-azul p{
-    padding-right: 2%;
+    padding-right: 5%;
 }
 
 .card-jogador-vermelho{
@@ -167,11 +159,10 @@ form{
     display: flex;
     justify-content: left;
     align-items: center;
-    padding-bottom: 5%;
 }
 
 .card-jogador-vermelho p{
-    padding-left: 2%;
+    padding-left: 5%;
 }
 
 .card-previsao{
@@ -183,7 +174,7 @@ form{
 }
 
 .card-previsao h4, .card-previsao p{
-    font-size: 14px;
+    font-size: 16px;
 }
 
 .card-previsao p{
